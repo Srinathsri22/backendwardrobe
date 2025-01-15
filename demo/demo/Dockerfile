@@ -1,20 +1,23 @@
-# Use a Maven base image
-FROM maven:3.8.1-openjdk-11 as builder
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-slim
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the pom.xml and install dependencies
-COPY pom.xml .
+# Copy the pom.xml and source code to the container
+COPY demo/demo/pom.xml demo/demo/
 
-# Install project dependencies
+# Install dependencies (this will create the target directory with the JAR)
 RUN mvn clean install
 
-# Copy the rest of the source code
-COPY src /app/src
+# Copy the rest of the application code
+COPY demo/demo/ /app/
 
-# Package the application
-RUN mvn clean package
+# Expose the port your app will run on
+EXPOSE 8080
 
-# Start the application using the generated JAR file
-CMD ["java", "-jar", "/app/target/demo-0.0.1-SNAPSHOT.jar"]
+# Run the app
+CMD ["java", "-jar", "demo/demo/target/demo-0.0.1-SNAPSHOT.jar"]
