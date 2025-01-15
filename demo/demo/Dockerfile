@@ -4,10 +4,13 @@ FROM openjdk:17-jdk-slim
 # Install Maven
 RUN apt-get update && apt-get install -y maven
 
+# Add Maven to the system PATH
+ENV PATH="/usr/share/maven/bin:${PATH}"
+
 # Set the working directory
 WORKDIR /app
 
-# Copy the pom.xml and source code to the container
+# Copy the pom.xml to the container
 COPY demo/demo/pom.xml demo/demo/
 
 # Install dependencies (this will create the target directory with the JAR)
